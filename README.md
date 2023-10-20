@@ -1,6 +1,8 @@
-# BLAS_at_home
+# `bah` (BLAS_at_home)
 
-BLAS at home, or `bah`, is my attempt at implementing BLAS (the CBLAS interface) from scratch for fun *and profit*.
+<img src="./media/BLAS_at_home.png" width=250>
+
+`bah` is my attempt at implementing BLAS from scratch for fun *and profit*.
 
 ## References
 
