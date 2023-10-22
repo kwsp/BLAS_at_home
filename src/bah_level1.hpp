@@ -173,4 +173,31 @@ BAH_CBLAS_API void cblas_cdotc_sub(const int n, const void *x, const int incx,
 BAH_CBLAS_API void cblas_zdotc_sub(const int n, const void *x, const int incx,
                                    const void *y, const int incy, void *dotc);
 
+/**
+cblas_?dotu
+
+Computes a complex vector-vector dot product.
+
+The ?dotu routines perform a vector-vector reduction operation defined as
+
+res = \sum_{i=1}^{n} x_i * y_i;
+
+where xi and yi are elements of complex vectors x and y.
+
+Input Parameters
+n: Specifies the number of elements in vectors x and y.
+x: Array, size at least (1 + (n -1)*abs(incx)).
+incx: Specifies the increment for the elements of x.
+y: Array, size at least (1 + (n -1)*abs(incy)).
+incy: Specifies the increment for the elements of y.
+
+Output Parameters
+dotu: Contains the result of the dot product of x and y, if n is positive.
+Otherwise, it contains 0.
+*/
+BAH_CBLAS_API void cblas_cdotu_sub(const int n, const void *x, const int incx,
+                                   const void *y, const int incy, void *dotu);
+BAH_CBLAS_API void cblas_zdotu_sub(const int n, const void *x, const int incx,
+                                   const void *y, const int incy, void *dotu);
+
 }  // namespace bah

@@ -250,4 +250,29 @@ void cblas_zdotc_sub(const int n, const void *x, const int incx, const void *y,
               reinterpret_cast<double *>(dotc));
 };
 
+// cblas_?dotu
+template <typename RealTp>
+static inline void dotu_kernel(const int n, const RealTp *x, const int incx,
+                               const RealTp *y, const int incy, RealTp *dotc) {
+  int ix{0}, iy{0};
+  for (int i = 0; i < n; i++) {
+    cx_mul<RealTp>(x + ix, y + iy, dotc);
+    ix += incx * 2;
+    iy += incy * 2;
+  }
+}
+
+void cblas_cdotu_sub(const int n, const void *x, const int incx, const void *y,
+                     const int incy, void *dotu) {
+  dotu_kernel(n, reinterpret_cast<const float *>(x), incx,
+              reinterpret_cast<const float *>(y), incy,
+              reinterpret_cast<float *>(dotu));
+}
+void cblas_zdotu_sub(const int n, const void *x, const int incx, const void *y,
+                     const int incy, void *dotu) {
+  dotu_kernel(n, reinterpret_cast<const double *>(x), incx,
+              reinterpret_cast<const double *>(y), incy,
+              reinterpret_cast<double *>(dotu));
+}
+
 }  // namespace bah
