@@ -141,4 +141,26 @@ void cblas_zcopy(const int n, const void *x, const int incx, void *y,
                         reinterpret_cast<double *>(y), incy);
 }
 
+template <typename RealTp>
+static inline RealTp dot_kernel(const int n, const RealTp *x, const int incx,
+                                const RealTp *y, const int incy) {
+  RealTp res{};
+  int ix{}, iy{};
+  for (int i = 0; i < n; i++) {
+    res += x[ix] * y[iy];
+    ix += incx;
+    iy += incy;
+  }
+  return res;
+}
+
+float cblas_sdot(const int n, const float *x, const int incx, const float *y,
+                 const int incy) {
+  return dot_kernel(n, x, incx, y, incy);
+}
+double cblas_ddot(const int n, const double *x, const int incx, const double *y,
+                  const int incy) {
+  return dot_kernel(n, x, incx, y, incy);
+}
+
 }  // namespace bah

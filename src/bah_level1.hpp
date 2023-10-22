@@ -83,7 +83,6 @@ Output Parameters
 y: Contains a copy of the vector x if n is positive. Otherwise, parameters are
 unaltered.
 */
-
 BAH_CBLAS_API void cblas_scopy(const int n, const float *x, const int incx,
                                float *y, const int incy);
 BAH_CBLAS_API void cblas_dcopy(const int n, const double *x, const int incx,
@@ -92,5 +91,26 @@ BAH_CBLAS_API void cblas_ccopy(const int n, const void *x, const int incx,
                                void *y, const int incy);
 BAH_CBLAS_API void cblas_zcopy(const int n, const void *x, const int incx,
                                void *y, const int incy);
+
+/**
+cblas_?dot
+
+Computes a vector-vector dot product.
+
+Input Parameters
+n: Specifies the number of elements in vectors x and y.
+x: Array, size at least (1+(n-1)*abs(incx)).
+incx: Specifies the increment for the elements of x.
+y: Array, size at least (1+(n-1)*abs(incy)).
+incy: Specifies the increment for the elements of y.
+
+Return Values
+The result of the dot product of x and y, if n is positive. Otherwise, returns
+0.
+*/
+BAH_CBLAS_API float cblas_sdot(const int n, const float *x, const int incx,
+                               const float *y, const int incy);
+BAH_CBLAS_API double cblas_ddot(const int n, const double *x, const int incx,
+                                const double *y, const int incy);
 
 }  // namespace bah
