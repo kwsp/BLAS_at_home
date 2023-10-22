@@ -1,6 +1,6 @@
 set -e
 
-cmake -B build
+cmake --preset=clang-with-warnings -B build
 cmake --build build -j
 
 if [[ -f compile_commands.json ]]; then
