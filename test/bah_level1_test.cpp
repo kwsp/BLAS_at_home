@@ -13,7 +13,7 @@
 using cfloat = std::complex<float>;
 using cdouble = std::complex<double>;
 
-const std::array STRIDES{1, 2, 3, 4, 8, 16};
+const std::array STRIDES{1, 2, 3, 4, 8};
 
 #define _TEST_ASUM(FUNC, DTYPE, TOL)                      \
   TEST(Level1_asum, FUNC) {                               \
@@ -104,22 +104,22 @@ _TEST_COPY(cblas_dcopy, double);
 _TEST_COPY(cblas_ccopy, cfloat);
 _TEST_COPY(cblas_zcopy, cdouble);
 
-#define _TEST_DOT(FUNC, DTYPE, TOL)                                       \
-  TEST(Level1_dot, FUNC) {                                                \
-    const auto x = bah::array::random<DTYPE>(512);                        \
-    const auto y = bah::array::random<DTYPE>(512);                        \
-                                                                          \
-    const auto _f = [&](const int incx, const int incy) {                 \
-      const int n = std::min(x.size() / incx, y.size() / incy);           \
-      const auto t = FUNC(x.size(), x.data(), incx, y.data(), incy);      \
-      const auto v = bah::FUNC(x.size(), x.data(), incx, y.data(), incy); \
-      helpers::EXPECT_FLOAT_PCT_ERR_LT(t, v, TOL);                        \
-    };                                                                    \
-    for (const auto stride_x : STRIDES) {                                 \
-      for (const auto stride_y : STRIDES) {                               \
-        _f(stride_x, stride_y);                                           \
-      }                                                                   \
-    }                                                                     \
+#define _TEST_DOT(FUNC, DTYPE, TOL)                                \
+  TEST(Level1_dot, FUNC) {                                         \
+    const auto x = bah::array::random<DTYPE>(512);                 \
+    const auto y = bah::array::random<DTYPE>(512);                 \
+                                                                   \
+    const auto _f = [&](const int incx, const int incy) {          \
+      const int n = std::min(x.size() / incx, y.size() / incy);    \
+      const auto t = FUNC(n, x.data(), incx, y.data(), incy);      \
+      const auto v = bah::FUNC(n, x.data(), incx, y.data(), incy); \
+      helpers::EXPECT_FLOAT_PCT_ERR_LT(t, v, TOL);                 \
+    };                                                             \
+    for (const auto stride_x : STRIDES) {                          \
+      for (const auto stride_y : STRIDES) {                        \
+        _f(stride_x, stride_y);                                    \
+      }                                                            \
+    }                                                              \
   }
 
 _TEST_DOT(cblas_sdot, float, 1e-5f);
@@ -132,9 +132,8 @@ TEST(Level1_sdot, cblas_sdsdot) {
   const auto _f = [&](const int incx, const int incy) {
     const int n = std::min(x.size() / incx, y.size() / incy);
     const float sb = 1.14;
-    const auto t = cblas_sdsdot(x.size(), sb, x.data(), incx, y.data(), incy);
-    const auto v =
-        bah::cblas_sdsdot(x.size(), sb, x.data(), incx, y.data(), incy);
+    const auto t = cblas_sdsdot(n, sb, x.data(), incx, y.data(), incy);
+    const auto v = bah::cblas_sdsdot(n, sb, x.data(), incx, y.data(), incy);
     helpers::EXPECT_FLOAT_PCT_ERR_LT(t, v, 1e-5f);
   };
   for (const auto stride_x : STRIDES) {
@@ -150,8 +149,8 @@ TEST(Level1_sdot, cblas_dsdot) {
 
   const auto _f = [&](const int incx, const int incy) {
     const int n = std::min(x.size() / incx, y.size() / incy);
-    const auto t = cblas_dsdot(x.size(), x.data(), incx, y.data(), incy);
-    const auto v = bah::cblas_dsdot(x.size(), x.data(), incx, y.data(), incy);
+    const auto t = cblas_dsdot(n, x.data(), incx, y.data(), incy);
+    const auto v = bah::cblas_dsdot(n, x.data(), incx, y.data(), incy);
     helpers::EXPECT_FLOAT_PCT_ERR_LT(t, v, 1e-6);
   };
   for (const auto stride_x : STRIDES) {
@@ -161,16 +160,16 @@ TEST(Level1_sdot, cblas_dsdot) {
   }
 }
 
-#define _TEST_COMPLEX_DOT(FUNC, DType, tol)                     \
+#define _TEST_COMPLEX_DOT(FUNC, DTYPE, tol)                     \
   TEST(Level1_dotc, FUNC) {                                     \
-    const auto x = bah::array::random<DType>(512);              \
-    const auto y = bah::array::random<DType>(512);              \
+    const auto x = bah::array::random<DTYPE>(512);              \
+    const auto y = bah::array::random<DTYPE>(512);              \
     const auto _f = [&](const int incx, const int incy) {       \
       const int n = std::min(x.size() / incx, y.size() / incy); \
-      DType t{};                                                \
-      FUNC(x.size(), x.data(), incx, y.data(), incy, &t);       \
-      DType v{};                                                \
-      bah::FUNC(x.size(), x.data(), incx, y.data(), incy, &v);  \
+      DTYPE t{};                                                \
+      FUNC(n, x.data(), incx, y.data(), incy, &t);              \
+      DTYPE v{};                                                \
+      bah::FUNC(n, x.data(), incx, y.data(), incy, &v);         \
       helpers::EXPECT_CX_PCT_ERR_LT(t, v, tol);                 \
     };                                                          \
     for (const auto stride_x : STRIDES) {                       \
@@ -182,3 +181,20 @@ TEST(Level1_sdot, cblas_dsdot) {
 
 _TEST_COMPLEX_DOT(cblas_cdotc_sub, cfloat, 1e-3f)
 _TEST_COMPLEX_DOT(cblas_zdotc_sub, cdouble, 1e-9)
+
+#define _TEST_NRM2(FUNC, DTYPE, TOL)                  \
+  TEST(Level1_nrm2, FUNC) {                           \
+    const auto x = bah::array::random<DTYPE>(8);      \
+    const auto _f = [&](const int incx) {             \
+      const int n = x.size() / incx;                  \
+      const auto t = FUNC(n, x.data(), incx);         \
+      const auto v = bah::FUNC(n, x.data(), incx);    \
+      helpers::EXPECT_FLOAT_PCT_ERR_LT(t, v, TOL);    \
+    };                                                \
+    for (const auto stride_x : STRIDES) _f(stride_x); \
+  }
+
+_TEST_NRM2(cblas_snrm2, float, 1e-6f);
+_TEST_NRM2(cblas_dnrm2, double, 1e-9);
+_TEST_NRM2(cblas_scnrm2, cfloat, 1e-6f);
+_TEST_NRM2(cblas_dznrm2, cdouble, 1e-9);

@@ -275,4 +275,45 @@ void cblas_zdotu_sub(const int n, const void *x, const int incx, const void *y,
               reinterpret_cast<double *>(dotu));
 }
 
+// cblas_?nrm2
+template <typename RealTp>
+static inline RealTp nrm2_kernel(const int n, const RealTp *x, const int incx) {
+  RealTp sum2{};
+  int ix{0};
+  for (int i = 0; i < n; i++) {
+    sum2 += x[ix] * x[ix];
+    ix += incx;
+  }
+  return std::sqrt(sum2);
+}
+
+// cblas_?nrm2
+template <typename RealTp>
+static inline RealTp nrm2_kernel_cx(const int n, const RealTp *x,
+                                    const int incx) {
+  RealTp sum2{};
+  int ix{0};
+  for (int i = 0; i < n; i++) {
+    sum2 += x[ix] * x[ix] + x[ix + 1] * x[ix + 1];
+    ix += incx * 2;
+  }
+  return std::sqrt(sum2);
+}
+
+float cblas_snrm2(const int n, const float *x, const int incx) {
+  return nrm2_kernel(n, x, incx);
+}
+
+double cblas_dnrm2(const int n, const double *x, const int incx) {
+  return nrm2_kernel(n, x, incx);
+}
+
+float cblas_scnrm2(const int n, const void *x, const int incx) {
+  return nrm2_kernel_cx(n, reinterpret_cast<const float *>(x), incx);
+}
+
+double cblas_dznrm2(const int n, const void *x, const int incx) {
+  return nrm2_kernel_cx(n, reinterpret_cast<const double *>(x), incx);
+};
+
 }  // namespace bah

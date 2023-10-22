@@ -4,13 +4,15 @@
 #include <gtest/gtest.h>
 
 #include <complex>
+#include <numeric>
 #include <vector>
 
 namespace helpers {
 
 template <typename RealTp>
 RealTp pct_err(const RealTp a, const RealTp b) {
-  if (a == 0 && b == 0) return 0;
+  if (a == 0 && b == 0) return 0.;
+  if (a == 0 || b == 0) return 1.;
   return std::fabs(a - b) / ((std::fabs(a) + std::fabs(b)) / 2);
 }
 

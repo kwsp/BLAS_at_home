@@ -29,8 +29,6 @@ of the vector.
 Return Values
 Contains the sum of magnitudes of real and imaginary parts of all elements of
 the vector.
-
-https://www.intel.com/content/www/us/en/docs/onemkl/developer-reference-c/2023-2/cblas-asum.html
 */
 BAH_CBLAS_API float cblas_sasum(const int n, const float *x, const int incX);
 BAH_CBLAS_API float cblas_scasum(const int n, const void *x, const int incx);
@@ -55,8 +53,6 @@ Input Params
 
 Output Parameters
 y: Contains the updated vector y.
-
-https://www.intel.com/content/www/us/en/docs/onemkl/developer-reference-c/2023-2/cblas-axpy.html
 */
 BAH_CBLAS_API void cblas_saxpy(const int n, const float a, const float *x,
                                const int incx, float *y, const int incy);
@@ -199,5 +195,30 @@ BAH_CBLAS_API void cblas_cdotu_sub(const int n, const void *x, const int incx,
                                    const void *y, const int incy, void *dotu);
 BAH_CBLAS_API void cblas_zdotu_sub(const int n, const void *x, const int incx,
                                    const void *y, const int incy, void *dotu);
+
+/**
+cblas_?nrm2
+
+Computes the Euclidean norm of a vector.
+
+The ?nrm2 routines perform a vector reduction operation defined as
+
+res = ||x||
+
+where x is a vector, res is a value containing the Euclidean norm of the
+elements of x.
+
+Input Parameters
+n: Specifies the number of elements in vector x.
+x: Array, size at least (1 + (n -1)*abs (incx)).
+incx: Specifies the increment for the elements of x.
+
+Return Values
+The Euclidean norm of the vector x.
+*/
+BAH_CBLAS_API float cblas_snrm2(const int n, const float *x, const int incx);
+BAH_CBLAS_API double cblas_dnrm2(const int n, const double *x, const int incx);
+BAH_CBLAS_API float cblas_scnrm2(const int n, const void *x, const int incx);
+BAH_CBLAS_API double cblas_dznrm2(const int n, const void *x, const int incx);
 
 }  // namespace bah
