@@ -113,4 +113,36 @@ BAH_CBLAS_API float cblas_sdot(const int n, const float *x, const int incx,
 BAH_CBLAS_API double cblas_ddot(const int n, const double *x, const int incx,
                                 const double *y, const int incy);
 
+/**
+cblas_?sdot
+
+Computes a vector-vector dot product with double precision.
+
+The ?sdot routines compute the inner product of two vectors with double
+precision. Both routines use double precision accumulation of the intermediate
+results, but the sdsdot routine outputs the final result in single precision,
+whereas the dsdot routine outputs the double precision result. The function
+sdsdot also adds scalar value sb to the inner product.
+
+Input Parameters
+n: Specifies the number of elements in the input vectors sx and sy.
+sb: Single precision scalar to be added to inner product (for the function
+sdsdot only). sx, sy: Arrays, size at least (1+(n -1)*abs(incx)) and
+(1+(n-1)*abs(incy)), respectively. Contain the input single precision vectors.
+incx: Specifies the increment for the elements of sx.
+incy: Specifies the increment for the elements of sy.
+
+Output Parameters
+res: Contains the result of the dot product of sx and sy (with sb added for
+sdsdot), if n is positive. Otherwise, res contains sb for sdsdot and 0 for
+dsdot.
+
+Return Values
+The result of the dot product of sx and sy (with sb added for sdsdot), if n is
+positive. Otherwise, returns sb for sdsdot and 0 for dsdot.
+*/
+float cblas_sdsdot(const int n, const float sb, const float *sx, const int incx,
+                   const float *sy, const int incy);
+double cblas_dsdot(const int n, const float *sx, const int incx,
+                   const float *sy, const int incy);
 }  // namespace bah

@@ -263,3 +263,39 @@ TEST(Level1_dot, cblas_ddot) {
     }
   }
 }
+
+TEST(Level1_sdot, cblas_sdsdot) {
+  const auto x = bah::array::arange<float>(512);
+  const auto y = bah::array::arange<float>(512);
+
+  const auto _f = [&](const int incx, const int incy) {
+    const int n = std::min(x.size() / incx, y.size() / incy);
+    const float sb = 3.14;
+    const auto t = cblas_sdsdot(x.size(), sb, x.data(), incx, y.data(), incy);
+    const auto v =
+        bah::cblas_sdsdot(x.size(), sb, x.data(), incx, y.data(), incy);
+    helpers::EXPECT_FLOAT_PCT_ERR_LT(t, v, 1e-6f);
+  };
+  for (const auto stride_x : STRIDES) {
+    for (const auto stride_y : STRIDES) {
+      _f(stride_x, stride_y);
+    }
+  }
+}
+
+TEST(Level1_sdot, cblas_dsdot) {
+  const auto x = bah::array::arange<float>(512);
+  const auto y = bah::array::arange<float>(512);
+
+  const auto _f = [&](const int incx, const int incy) {
+    const int n = std::min(x.size() / incx, y.size() / incy);
+    const auto t = cblas_dsdot(x.size(), x.data(), incx, y.data(), incy);
+    const auto v = bah::cblas_dsdot(x.size(), x.data(), incx, y.data(), incy);
+    helpers::EXPECT_FLOAT_PCT_ERR_LT(t, v, 1e-6);
+  };
+  for (const auto stride_x : STRIDES) {
+    for (const auto stride_y : STRIDES) {
+      _f(stride_x, stride_y);
+    }
+  }
+}

@@ -141,6 +141,7 @@ void cblas_zcopy(const int n, const void *x, const int incx, void *y,
                         reinterpret_cast<double *>(y), incy);
 }
 
+// cblas_?dot
 template <typename RealTp>
 static inline RealTp dot_kernel(const int n, const RealTp *x, const int incx,
                                 const RealTp *y, const int incy) {
@@ -161,6 +162,30 @@ float cblas_sdot(const int n, const float *x, const int incx, const float *y,
 double cblas_ddot(const int n, const double *x, const int incx, const double *y,
                   const int incy) {
   return dot_kernel(n, x, incx, y, incy);
+}
+
+// cblas_?sdot
+static inline double dsdot_kernel(const int n, const float *x, const int incx,
+                                  const float *y, const int incy) {
+  double res{};
+  int ix{}, iy{};
+  for (int i = 0; i < n; i++) {
+    res += static_cast<double>(x[ix]) * static_cast<double>(y[iy]);
+    ix += incx;
+    iy += incy;
+  }
+  return res;
+}
+
+float cblas_sdsdot(const int n, const float sb, const float *sx, const int incx,
+                   const float *sy, const int incy) {
+  const double res = dsdot_kernel(n, sx, incx, sy, incy);
+  return static_cast<float>(res) + sb;
+}
+
+double cblas_dsdot(const int n, const float *sx, const int incx,
+                   const float *sy, const int incy) {
+  return dsdot_kernel(n, sx, incx, sy, incy);
 }
 
 }  // namespace bah
