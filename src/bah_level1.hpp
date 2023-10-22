@@ -86,13 +86,10 @@ unaltered.
 
 BAH_CBLAS_API void cblas_scopy(const int n, const float *x, const int incx,
                                float *y, const int incy);
-
 BAH_CBLAS_API void cblas_dcopy(const int n, const double *x, const int incx,
                                double *y, const int incy);
-
 BAH_CBLAS_API void cblas_ccopy(const int n, const void *x, const int incx,
                                void *y, const int incy);
-
 BAH_CBLAS_API void cblas_zcopy(const int n, const void *x, const int incx,
                                void *y, const int incy);
 
