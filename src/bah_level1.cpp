@@ -1,6 +1,7 @@
 #include "bah_level1.hpp"
 
 #include <cmath>
+#include <complex>
 
 // BLAS at home
 namespace bah {
@@ -49,8 +50,25 @@ static inline void axpy_kernel(const int n, const RealTp a, const RealTp *x,
   int ix = 0, iy = 0;
   for (int i = 0; i < n; i++) {
     y[iy] += a * x[ix];
+
     ix += incx;
     iy += incy;
+  }
+}
+
+template <typename RealTp>
+static inline void caxpy_kernel(const int n, const RealTp *a, const RealTp *x,
+                                const int incx, RealTp *y, const int incy) {
+  int ix = 0, iy = 0;
+  for (int i = 0; i < n; i++) {
+    RealTp re1 = a[0], re2 = x[ix];
+    RealTp im1 = a[1], im2 = x[ix + 1];
+
+    y[iy] += re1 * re2 - im1 * im2;
+    y[iy + 1] += re1 * im2 + re2 * im1;
+
+    ix += incx * 2;
+    iy += incy * 2;
   }
 }
 
@@ -64,14 +82,15 @@ void cblas_daxpy(const int n, const double a, const double *x, const int incx,
 }
 void cblas_caxpy(const int n, const void *a, const void *x, const int incx,
                  void *y, const int incy) {
-  // TODO
-  float _a = *(reinterpret_cast<const float *>(a));
-  // return axpy_kernel<float>(n, , x, incx*2, reinterpret_cast<const
-  // float*>(y), incy*2);
+  return caxpy_kernel<float>(n, reinterpret_cast<const float *>(a),
+                             reinterpret_cast<const float *>(x), incx,
+                             reinterpret_cast<float *>(y), incy);
 };
 void cblas_zaxpy(const int n, const void *a, const void *x, const int incx,
-                 void *y, const int incy){
-    // TODO
+                 void *y, const int incy) {
+  return caxpy_kernel<double>(n, reinterpret_cast<const double *>(a),
+                              reinterpret_cast<const double *>(x), incx,
+                              reinterpret_cast<double *>(y), incy);
 };
 
 }  // namespace bah
