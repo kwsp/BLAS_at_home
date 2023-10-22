@@ -1,8 +1,12 @@
 #pragma once
 
 #include <cmath>
+#include <complex>
+#include <format>
 #include <iostream>
 #include <ranges>
+
+#include "array_helpers.hpp"
 
 // Print vector like
 // (#5) [1, 2, 3, 4, 5]
@@ -24,3 +28,8 @@ std::ostream &operator<<(std::ostream &os, const std::vector<T> &vec) {
   os << "]\n";
   return os;
 }
+
+// template <typename T>
+// std::ostream &operator<<(std::ostream &os, const std::complex<T>& v) {
+// os <<
+//}
