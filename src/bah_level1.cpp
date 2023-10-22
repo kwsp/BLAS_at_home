@@ -6,6 +6,47 @@
 // BLAS at home
 namespace bah {
 
+namespace {
+/**
+Multiple 2 complex numbers (a, b) and add the result to res.
+*/
+template <typename T>
+static inline void cx_mul(const T *a, const T *b, T *res) {
+  // This doesn't handle the infinity edge cases but is much faster than the std
+  // version.
+  const T &re1 = a[0], re2 = b[0];
+  const T &im1 = a[1], im2 = b[1];
+  res[0] += re1 * re2 - im1 * im2;
+  res[1] += re1 * im2 + re2 * im1;
+
+  // const auto &_a = *reinterpret_cast<const std::complex<T> *>(a);
+  // const auto &_b = *reinterpret_cast<const std::complex<T> *>(b);
+  // const auto _res = _a * _b;
+  // res[0] += _res.real();
+  // res[1] += _res.imag();
+}
+
+/**
+Multiple 2 complex numbers (conjg(a), b) and add the result to res.
+*/
+template <typename T>
+static inline void cx_mulc(const T *a, const T *b, T *res) {
+  // This doesn't handle the infinity edge cases but is much faster than the std
+  // version.
+  const T &re1 = a[0], re2 = b[0];
+  const T &im1 = a[1], im2 = b[1];
+  res[0] += re1 * re2 + im1 * im2;
+  res[1] += re1 * im2 - re2 * im1;
+
+  // const auto &_a = *reinterpret_cast<const std::complex<T> *>(a);
+  // const auto &_b = *reinterpret_cast<const std::complex<T> *>(b);
+  // const auto _res = std::conj(_a) * _b;
+  // res[0] += _res.real();
+  // res[1] += _res.imag();
+}
+
+}  // namespace
+
 // cblas_?asum
 template <typename RealTp>
 static inline RealTp asum_kernel(const int n, const RealTp *x, const int incx) {
@@ -61,12 +102,7 @@ static inline void caxpy_kernel(const int n, const RealTp *a, const RealTp *x,
                                 const int incx, RealTp *y, const int incy) {
   int ix{0}, iy{0};
   for (int i = 0; i < n; i++) {
-    RealTp re1 = a[0], re2 = x[ix];
-    RealTp im1 = a[1], im2 = x[ix + 1];
-
-    y[iy] += re1 * re2 - im1 * im2;
-    y[iy + 1] += re1 * im2 + re2 * im1;
-
+    cx_mul(a, x + ix, y + iy);
     ix += incx * 2;
     iy += incy * 2;
   }
@@ -187,5 +223,31 @@ double cblas_dsdot(const int n, const float *sx, const int incx,
                    const float *sy, const int incy) {
   return dsdot_kernel(n, sx, incx, sy, incy);
 }
+
+// cblas_?dotc
+template <typename RealTp>
+static inline void dotc_kernel(const int n, const RealTp *x, const int incx,
+                               const RealTp *y, const int incy, RealTp *dotc) {
+  int ix{0}, iy{0};
+  for (int i = 0; i < n; i++) {
+    cx_mulc<RealTp>(x + ix, y + iy, dotc);
+    ix += incx * 2;
+    iy += incy * 2;
+  }
+}
+
+void cblas_cdotc_sub(const int n, const void *x, const int incx, const void *y,
+                     const int incy, void *dotc) {
+  dotc_kernel(n, reinterpret_cast<const float *>(x), incx,
+              reinterpret_cast<const float *>(y), incy,
+              reinterpret_cast<float *>(dotc));
+}
+
+void cblas_zdotc_sub(const int n, const void *x, const int incx, const void *y,
+                     const int incy, void *dotc) {
+  dotc_kernel(n, reinterpret_cast<const double *>(x), incx,
+              reinterpret_cast<const double *>(y), incy,
+              reinterpret_cast<double *>(dotc));
+};
 
 }  // namespace bah

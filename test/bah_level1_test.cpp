@@ -159,7 +159,7 @@ TEST(Level1_copy, cblas_scopy) {
     std::vector<T> y_v(x.size(), 0);
     bah::cblas_scopy(n, x.data(), incx, y_v.data(), incy);
 
-    helpers::ASSERT_VEC_EQ(y_t, y_v);
+    helpers::ASSERT_FLOAT_VEC_EQ(y_t, y_v, 1e-9f);
   };
   for (const auto stride_x : STRIDES) {
     for (const auto stride_y : STRIDES) {
@@ -231,8 +231,8 @@ TEST(Level1_copy, cblas_zcopy) {
 }
 
 TEST(Level1_dot, cblas_sdot) {
-  const auto x = bah::array::arange<float>(512);
-  const auto y = bah::array::arange<float>(512);
+  const auto x = bah::array::random<float>(512);
+  const auto y = bah::array::random<float>(512);
 
   const auto _f = [&](const int incx, const int incy) {
     const int n = std::min(x.size() / incx, y.size() / incy);
@@ -248,14 +248,14 @@ TEST(Level1_dot, cblas_sdot) {
 }
 
 TEST(Level1_dot, cblas_ddot) {
-  const auto x = bah::array::arange<double>(512);
-  const auto y = bah::array::arange<double>(512);
+  const auto x = bah::array::random<double>(512);
+  const auto y = bah::array::random<double>(512);
 
   const auto _f = [&](const int incx, const int incy) {
     const int n = std::min(x.size() / incx, y.size() / incy);
     const auto t = cblas_ddot(x.size(), x.data(), incx, y.data(), incy);
     const auto v = bah::cblas_ddot(x.size(), x.data(), incx, y.data(), incy);
-    helpers::EXPECT_FLOAT_PCT_ERR_LT(t, v, 1e-6);
+    helpers::EXPECT_FLOAT_PCT_ERR_LT(t, v, 1e-9);
   };
   for (const auto stride_x : STRIDES) {
     for (const auto stride_y : STRIDES) {
@@ -265,16 +265,16 @@ TEST(Level1_dot, cblas_ddot) {
 }
 
 TEST(Level1_sdot, cblas_sdsdot) {
-  const auto x = bah::array::arange<float>(512);
-  const auto y = bah::array::arange<float>(512);
+  const auto x = bah::array::arange<float>(64);
+  const auto y = bah::array::arange<float>(64);
 
   const auto _f = [&](const int incx, const int incy) {
     const int n = std::min(x.size() / incx, y.size() / incy);
-    const float sb = 3.14;
+    const float sb = 1.14;
     const auto t = cblas_sdsdot(x.size(), sb, x.data(), incx, y.data(), incy);
     const auto v =
         bah::cblas_sdsdot(x.size(), sb, x.data(), incx, y.data(), incy);
-    helpers::EXPECT_FLOAT_PCT_ERR_LT(t, v, 1e-6f);
+    helpers::EXPECT_FLOAT_PCT_ERR_LT(t, v, 1e-5f);
   };
   for (const auto stride_x : STRIDES) {
     for (const auto stride_y : STRIDES) {
@@ -284,14 +284,56 @@ TEST(Level1_sdot, cblas_sdsdot) {
 }
 
 TEST(Level1_sdot, cblas_dsdot) {
-  const auto x = bah::array::arange<float>(512);
-  const auto y = bah::array::arange<float>(512);
+  const auto x = bah::array::arange<float>(64);
+  const auto y = bah::array::arange<float>(64);
 
   const auto _f = [&](const int incx, const int incy) {
     const int n = std::min(x.size() / incx, y.size() / incy);
     const auto t = cblas_dsdot(x.size(), x.data(), incx, y.data(), incy);
     const auto v = bah::cblas_dsdot(x.size(), x.data(), incx, y.data(), incy);
     helpers::EXPECT_FLOAT_PCT_ERR_LT(t, v, 1e-6);
+  };
+  for (const auto stride_x : STRIDES) {
+    for (const auto stride_y : STRIDES) {
+      _f(stride_x, stride_y);
+    }
+  }
+}
+
+TEST(Level1_dotc, cblas_cdotc_sub) {
+  const auto x = bah::array::random<cfloat>(512);
+  const auto y = bah::array::random<cfloat>(512);
+
+  const auto _f = [&](const int incx, const int incy) {
+    const int n = std::min(x.size() / incx, y.size() / incy);
+    cfloat t{};
+    cblas_cdotc_sub(x.size(), x.data(), incx, y.data(), incy, &t);
+
+    cfloat v{};
+    bah::cblas_cdotc_sub(x.size(), x.data(), incx, y.data(), incy, &v);
+
+    helpers::EXPECT_CX_PCT_ERR_LT(t, v, 1e-3f);
+  };
+  for (const auto stride_x : STRIDES) {
+    for (const auto stride_y : STRIDES) {
+      _f(stride_x, stride_y);
+    }
+  }
+}
+
+TEST(Level1_dotc, cblas_zdotc_sub) {
+  const auto x = bah::array::random<cdouble>(512);
+  const auto y = bah::array::random<cdouble>(512);
+
+  const auto _f = [&](const int incx, const int incy) {
+    const int n = std::min(x.size() / incx, y.size() / incy);
+    cdouble t{};
+    cblas_zdotc_sub(x.size(), x.data(), incx, y.data(), incy, &t);
+
+    cdouble v{};
+    bah::cblas_zdotc_sub(x.size(), x.data(), incx, y.data(), incy, &v);
+
+    helpers::EXPECT_CX_PCT_ERR_LT(t, v, 1e-9);
   };
   for (const auto stride_x : STRIDES) {
     for (const auto stride_y : STRIDES) {

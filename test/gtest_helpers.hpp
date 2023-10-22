@@ -3,18 +3,29 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include <complex>
 #include <vector>
 
 namespace helpers {
 
 template <typename RealTp>
 RealTp pct_err(const RealTp a, const RealTp b) {
-  return std::fabs(a - b) / ((a + b) / 2);
+  if (a == 0 && b == 0) return 0;
+  return std::fabs(a - b) / ((std::fabs(a) + std::fabs(b)) / 2);
 }
 
 template <typename RealTp>
 void EXPECT_FLOAT_PCT_ERR_LT(const RealTp a, const RealTp b, const RealTp err) {
-  EXPECT_LT(pct_err(a, b), err);
+  EXPECT_LT(pct_err(a, b), err) << "a = " << a << ", b = " << b << "\n";
+}
+
+template <typename RealTp>
+void EXPECT_CX_PCT_ERR_LT(const std::complex<RealTp> a,
+                          const std::complex<RealTp> b, const RealTp err) {
+  auto real_err = pct_err(a.real(), b.real());
+  auto imag_err = pct_err(a.imag(), b.imag());
+  EXPECT_LT(real_err + imag_err, err * 2)
+      << "a = " << a << ", b = " << b << "\n";
 }
 
 template <typename T>

@@ -141,8 +141,36 @@ Return Values
 The result of the dot product of sx and sy (with sb added for sdsdot), if n is
 positive. Otherwise, returns sb for sdsdot and 0 for dsdot.
 */
-float cblas_sdsdot(const int n, const float sb, const float *sx, const int incx,
-                   const float *sy, const int incy);
-double cblas_dsdot(const int n, const float *sx, const int incx,
-                   const float *sy, const int incy);
+BAH_CBLAS_API float cblas_sdsdot(const int n, const float sb, const float *sx,
+                                 const int incx, const float *sy,
+                                 const int incy);
+BAH_CBLAS_API double cblas_dsdot(const int n, const float *sx, const int incx,
+                                 const float *sy, const int incy);
+
+/**
+cblas_?dotc
+
+Computes a dot product of a conjugated vector with another vector.
+
+The ?dotc routines perform a vector-vector operation defined as:
+
+res = \sum_{i=1}^{n} conjg(x_i) * y_i;
+
+where x_i and y_i are elements of vectors x and y.
+
+Input Parameters
+n: Specifies the number of elements in vectors x and y.
+x: Array, size at least (1 + (n -1)*abs(incx)).
+incx: Specifies the increment for the elements of x.
+y: Array, size at least (1 + (n -1)*abs(incy)).
+incy: Specifies the increment for the elements of y.
+Output Parameters
+dotc: Contains the result of the dot product of the conjugated x and
+unconjugated y, if n is positive. Otherwise, it contains 0.
+*/
+BAH_CBLAS_API void cblas_cdotc_sub(const int n, const void *x, const int incx,
+                                   const void *y, const int incy, void *dotc);
+BAH_CBLAS_API void cblas_zdotc_sub(const int n, const void *x, const int incx,
+                                   const void *y, const int incy, void *dotc);
+
 }  // namespace bah
