@@ -47,7 +47,7 @@ double cblas_dzasum(const int n, const void *x, const int incx) {
 template <typename RealTp>
 static inline void axpy_kernel(const int n, const RealTp a, const RealTp *x,
                                const int incx, RealTp *y, const int incy) {
-  int ix = 0, iy = 0;
+  int ix{0}, iy{0};
   for (int i = 0; i < n; i++) {
     y[iy] += a * x[ix];
 
@@ -59,7 +59,7 @@ static inline void axpy_kernel(const int n, const RealTp a, const RealTp *x,
 template <typename RealTp>
 static inline void caxpy_kernel(const int n, const RealTp *a, const RealTp *x,
                                 const int incx, RealTp *y, const int incy) {
-  int ix = 0, iy = 0;
+  int ix{0}, iy{0};
   for (int i = 0; i < n; i++) {
     RealTp re1 = a[0], re2 = x[ix];
     RealTp im1 = a[1], im2 = x[ix + 1];
@@ -92,5 +92,53 @@ void cblas_zaxpy(const int n, const void *a, const void *x, const int incx,
                               reinterpret_cast<const double *>(x), incx,
                               reinterpret_cast<double *>(y), incy);
 };
+
+// cblas_?copy
+template <typename RealTp>
+static inline void _copy_kernel(const int n, const RealTp *x, const int incx,
+                                RealTp *y, const int incy) {
+  int ix{0}, iy{0};
+  for (int i = 0; i < n; i++) {
+    y[iy] = x[ix];
+
+    ix += incx;
+    iy += incy;
+  }
+}
+
+template <typename RealTp>
+static inline void _ccopy_kernel(const int n, const RealTp *x, const int incx,
+                                 RealTp *y, const int incy) {
+  int ix{0}, iy{0};
+  for (int i = 0; i < n; i++) {
+    y[iy] = x[ix];
+    y[iy + 1] = x[ix + 1];
+
+    ix += incx * 2;
+    iy += incy * 2;
+  }
+}
+
+void cblas_scopy(const int n, const float *x, const int incx, float *y,
+                 const int incy) {
+  _copy_kernel<float>(n, x, incx, y, incy);
+}
+
+void cblas_dcopy(const int n, const double *x, const int incx, double *y,
+                 const int incy) {
+  _copy_kernel<double>(n, x, incx, y, incy);
+}
+
+void cblas_ccopy(const int n, const void *x, const int incx, void *y,
+                 const int incy) {
+  _ccopy_kernel<float>(n, reinterpret_cast<const float *>(x), incx,
+                       reinterpret_cast<float *>(y), incy);
+}
+
+void cblas_zcopy(const int n, const void *x, const int incx, void *y,
+                 const int incy) {
+  _ccopy_kernel<double>(n, reinterpret_cast<const double *>(x), incx,
+                        reinterpret_cast<double *>(y), incy);
+}
 
 }  // namespace bah

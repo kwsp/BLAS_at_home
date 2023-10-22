@@ -67,4 +67,33 @@ BAH_CBLAS_API void cblas_caxpy(const int n, const void *a, const void *x,
 BAH_CBLAS_API void cblas_zaxpy(const int n, const void *a, const void *x,
                                const int incx, void *y, const int incy);
 
+/**
+cblas_?copy
+
+Copies a vector to another vector.
+
+Input Parameters
+n: Specifies the number of elements in vectors x and y.
+x: Array, size at least (1 + (n-1)*abs(incx)).
+incx: Specifies the increment for the elements of x.
+y: Array, size at least (1 + (n-1)*abs(incy)).
+incy: Specifies the increment for the elements of y.
+
+Output Parameters
+y: Contains a copy of the vector x if n is positive. Otherwise, parameters are
+unaltered.
+*/
+
+BAH_CBLAS_API void cblas_scopy(const int n, const float *x, const int incx,
+                               float *y, const int incy);
+
+BAH_CBLAS_API void cblas_dcopy(const int n, const double *x, const int incx,
+                               double *y, const int incy);
+
+BAH_CBLAS_API void cblas_ccopy(const int n, const void *x, const int incx,
+                               void *y, const int incy);
+
+BAH_CBLAS_API void cblas_zcopy(const int n, const void *x, const int incx,
+                               void *y, const int incy);
+
 }  // namespace bah
