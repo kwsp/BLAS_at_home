@@ -221,4 +221,47 @@ BAH_CBLAS_API double cblas_dnrm2(const int n, const double *x, const int incx);
 BAH_CBLAS_API float cblas_scnrm2(const int n, const void *x, const int incx);
 BAH_CBLAS_API double cblas_dznrm2(const int n, const void *x, const int incx);
 
+/**
+cblas_?rot
+
+Performs rotation of points in the plane.
+
+Given two complex vectors x and y, each vector element of these vectors is
+replaced as follows:
+
+  xi = c*xi + s*yi
+  yi = c*yi - s*xi
+
+If s is a complex type, each vector element is replaced as follows:
+
+  xi = c*xi + s*yi
+  yi = c*yi - conj(s)*xi
+
+Input Parameters
+n: Specifies the number of elements in vectors x and y.
+x: Array, size at least (1 + (n-1)*abs(incx)).
+incx: Specifies the increment for the elements of x.
+y: Array, size at least (1 + (n -1)*abs(incy)).
+incy: Specifies the increment for the elements of y.
+c: A scalar.
+s: A scalar.
+
+Output Parameters
+x: Each element is replaced by c*x + s*y.
+y: Each element is replaced by c*y - s*x, or by c*y-conj(s)*x if s is a complex
+type.
+*/
+BAH_CBLAS_API void cblas_srot(const int n, float *x, const int incx, float *y,
+                              const int incy, const float c, const float s);
+BAH_CBLAS_API void cblas_drot(const int n, double *x, const int incx, double *y,
+                              const int incy, const double c, const double s);
+BAH_CBLAS_API void cblas_crot(const int n, void *x, const int incx, void *y,
+                              const int incy, const float c, const void *s);
+BAH_CBLAS_API void cblas_zrot(const int n, void *x, const int incx, void *y,
+                              const int incy, const double c, const void *s);
+BAH_CBLAS_API void cblas_csrot(const int n, void *x, const int incx, void *y,
+                               const int incy, const float c, const float s);
+BAH_CBLAS_API void cblas_zdrot(const int n, void *x, const int incx, void *y,
+                               const int incy, const double c, const double s);
+
 }  // namespace bah

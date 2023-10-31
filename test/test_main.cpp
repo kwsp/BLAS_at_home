@@ -6,7 +6,7 @@
 #include <iostream>
 #include <vector>
 
-#include "array_helpers.hpp"
+#include "bah_array.hpp"
 #define BAH_NO_C_API
 #include "bah.hpp"
 #include "print_helpers.hpp"
@@ -15,7 +15,7 @@
 void run_level1() {
   {
     // auto x = bah::array::random<float>(1024, -1.0f, 1.0f);
-    auto x = bah::array::arange<float>(1024);
+    auto x = bah::Arr<float>::arange(1024);
     std::cout << x;
     std::cout << "     sasum " << cblas_sasum(x.size(), x.data(), 1) << "\n";
     std::cout << "bah::sasum " << bah::cblas_sasum(x.size(), x.data(), 1)
@@ -27,7 +27,7 @@ void run_level1() {
   }
 
   {
-    auto x = bah::array::random<std::complex<float>>(5);
+    auto x = bah::Arr<bah::cfloat>::random(5);
     std::cout << x;
   }
 }
