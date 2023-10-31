@@ -6,8 +6,8 @@
 
 ## Roadmap
 
-- [] Phase 1: Naive implementation of all BLAS API functions/routines and test against OpenBLAS with [`googletest`](https://github.com/google/googletest).
-- [] Phase 2: Optimize the performance of all implementations and measure with google [`benchmark`](https://github.com/google/benchmark).
+- [ ] Phase 1: Naive implementation of all BLAS API functions/routines and test against OpenBLAS with [`googletest`](https://github.com/google/googletest).
+- [ ] Phase 2: Optimize the performance of all implementations and measure with google [`benchmark`](https://github.com/google/benchmark).
 
 ### [BLAS Level 1 API](https://www.intel.com/content/www/us/en/docs/onemkl/developer-reference-c/2023-2/blas-level-1-routines-and-functions.html)
 
