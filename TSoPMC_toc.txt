@@ -1,0 +1,58 @@
+List of Contributors v
+Preface vii
+1 Motivation 1
+  1.1 A Motivating Example: the LU Factorization  1
+  1.2 Notation  2
+  1.3 Algorithmic Variants  5
+  1.4 Presenting Algorithms in Code  5
+  1.5 High Performance and Blocked Algorithms  6
+  1.6 Numerical Stability  8
+2 Derivation of Linear Algebra Algorithms 9
+  2.1 A Farewell to Indices  9
+  2.2 Predicates as Assertions about the State  13
+  2.3 Verifying Loops  13
+  2.4 Goal-Oriented Derivation of Algorithms  16
+  2.5 Cost Analysis  20
+  2.6 Summary  23
+  2.7 Other Vector-Vector Operations  24
+  2.8 Further Exercises  24
+3 Matrix-Vector Operations 27
+  3.1 Notation  28
+  3.2 Linear Transformations and Matrices  29
+  3.3 Algorithms for the Matrix-Vector Product  33
+  3.4 Rank-1 Update  40
+  3.5 Solving Triangular Linear Systems of Equations  43
+  3.6 Blocked Algorithms  51
+  3.7 Summary  58
+  3.8 Other Matrix-Vector Operations  58
+  3.9 Further Exercises  58
+4 The FLAME Application Programming Interfaces 61
+  4.1 Example: gemv Revisited  61
+  4.2 The FLAME@lab Interface for M-script  62
+  4.3 The FLAME/C Interface for the C Programming Language  70
+  4.4 Summary  86
+  4.5 Further Exercises  86
+5 High Performance Algorithms 87
+  5.1 Architectural Considerations  87
+  5.2 Matrix-Matrix Product: Background  89
+  5.3 Algorithms for gemm  92
+  5.4 High-Performance Implementation of gepp, gemp, and gepm  100
+  5.5 Modularity and Performance via gemm: Implementing symm  105
+  5.6 Summary  108
+  5.7 Other Matrix-Matrix Operations  110
+  5.8 Further Exercises  111
+6 The LU and Cholesky Factorizations 113
+  6.1 Gaussian Elimination  113
+  6.2 The LU Factorization  114
+  6.3 The Basics of Partial Pivoting  122
+  6.4 Partial Pivoting and High Performance  125
+  6.5 The Cholesky Factorization  132
+  6.6 Summary  135
+  6.7 Further Exercises  136
+A The Use of Letters 137
+B Summary of FLAME/C Routines 139
+B.1 Parameters  139
+B.2 Initializing and Finalizing FLAME/C  141
+B.3 Manipulating Linear Algebra Objects  141
+B.4 Printing the Contents of an Object  143
+B.5 A Subset of Supported Operations  143

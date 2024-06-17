@@ -267,10 +267,36 @@ TEST(Level1_nrm2, cblas_dznrm2) {
   test_nrm2(cblas_dznrm2, bah::cblas_dznrm2, 1e-9);
 }
 
-// #define _TEST_ROT(FUNC, DTYPE, TOL, CTYPE, CVAL, STYPE, SVAL)
-
+// Test rot for real x, y, c, s
 template <typename DTYPE, is_function F>
 void test_rot(const F& f_t, const F& f_v, DTYPE tol, DTYPE c, DTYPE s) {
+  const auto _f = [&](const int incx, const int incy) {
+    auto x_t = bah::Arr<DTYPE>::arange(8);
+    auto y_t = bah::Arr<DTYPE>::arange(8);
+    const int n = std::min(x_t.size() / incx, y_t.size() / incy);
+
+    auto x_v = bah::Arr<DTYPE>::arange(8);
+    auto y_v = bah::Arr<DTYPE>::arange(8);
+
+    f_t(n, x_t.data(), incx, y_t.data(), incy, c, s);
+    f_v(n, x_v.data(), incx, y_v.data(), incy, c, s);
+
+    helpers::ASSERT_FLOAT_VEC_EQ(x_t, x_v, tol);
+    helpers::ASSERT_FLOAT_VEC_EQ(y_t, y_v, tol);
+  };
+  for (const auto stride_x : STRIDES) {
+    for (const auto stride_y : STRIDES) {
+      _f(stride_x, stride_y);
+    }
+  }
+}
+
+// Test rot for complex x, y, s, real c
+template <is_complex DTYPE, is_function F>
+void test_rot_cx_real(const F& f_t, const F& f_v,
+                      typename DTYPE::value_type tol,
+                      typename DTYPE::value_type c,
+                      typename DTYPE::value_type* s) {
   const auto _f = [&](const int incx, const int incy) {
     auto x_t = bah::Arr<DTYPE>::arange(8);
     auto y_t = bah::Arr<DTYPE>::arange(8);
@@ -322,6 +348,14 @@ TEST(Level1_rot, cblas_srot) {
 TEST(Level1_rot, cblas_drot) {
   test_rot<double>(cblas_drot, bah::cblas_drot, 1e-9, 2.33, 0.53);
 }
+
+TEST(Level1_rot, cblas_crot) {
+  float s[2] = {0.53, 0.32};
+  test_rot_cx_real<cfloat>(cblas_crot, bah::cblas_crot, 1e-9, 2.33, s);
+}
+// TEST(Level1_rot, cblas_zrot) {
+// test_rot<double>(cblas_drot, bah::cblas_drot, 1e-9, 2.33, 0.53);
+//}
 
 //_TEST_ROT(cblas_crot, cfloat, 1e-6f, float, 2.33, cfloat, cfloat(0.53,
 // 0.12));
